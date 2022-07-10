@@ -37,9 +37,7 @@ export function isSameSpecifiedBlockOptions(a?: BaseOptions, b?: BaseOptions): b
     let result = false
 
     if (isObject(a) && isObject(b)) {
-        ['namespace', 'unique', 'origin'].forEach(field => {
-            result = a[field] === b[field]
-        })
+        result = ['namespace', 'unique', 'origin'].every(field => a[field] === b[field])
     }
 
     return result
