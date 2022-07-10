@@ -100,6 +100,8 @@ class Client {
     }
     private _emit(payload: Payload) {
 
+        // ignore emit if it's itself
+        if (payload.from.unique === this._unique) return
 
         if (expect(payload.to || {}, this._options)) {
             this._event.emit(payload.type, payload)
