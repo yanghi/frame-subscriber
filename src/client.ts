@@ -31,6 +31,8 @@ class Client {
     private _namespace: string | undefined
     private _options: UniqueOptions<ClientOptions>
 
+    private _loaded: Record<string, Payload> = {}
+
     get options() {
         return this._options
     }
@@ -63,6 +65,10 @@ class Client {
 
     }
     private _resgiterEvent() {
+        this.on(Events.CREATED, (payload) => {
+            this._loaded[payload.from.unique] = payload
+        })
+
         this._win.addEventListener('message', (e) => {
             const raw = e.data
 
@@ -76,6 +82,43 @@ class Client {
             this._event.emit(Events.ORIGIN_MESSAGE, e)
 
         })
+    }
+    /**
+     * invoke callback when every client was created
+     */
+    whenReady(callback: EventHandler): this
+    /**
+     * invoke callback when the specified client was created
+     */
+    whenReady(unique: string | string[], callback: EventHandler): this
+    whenReady(uniqueOrCb: any, callback?: EventHandler): this {
+        let targets: string[] | undefined
+
+        if (typeof uniqueOrCb === 'function') {
+            callback = uniqueOrCb
+
+            this._event.on(Events.CREATED, uniqueOrCb)
+            targets = Object.keys(this._loaded)
+            uniqueOrCb = undefined
+        }
+
+        if (targets === undefined && uniqueOrCb) {
+            targets = Array.isArray(uniqueOrCb) ? uniqueOrCb : [uniqueOrCb]
+        }
+
+        if (!targets || !callback) return this
+
+        for (let index = 0; index < targets.length; index++) {
+            const clientUID = targets[index];
+
+            if (this._loaded[clientUID]) {
+                callback(this._loaded[clientUID])
+            } else {
+                this._event.on(Events.CREATED, callback)
+            }
+        }
+
+        return this
     }
     getRoot(win: Window): Window {
         const parent = win.parent
