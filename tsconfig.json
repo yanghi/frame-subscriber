@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "es2015",
+        "declaration": true,
+        "outDir": "./dist",
+        "importHelpers": true,
+        "moduleResolution": "node",
+        "strict": true,
+        "noImplicitAny": false,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": false,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true
+      }
+    
+}

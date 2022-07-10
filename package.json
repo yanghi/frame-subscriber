@@ -1,0 +1,37 @@
+{
+  "name": "frame-subscriber",
+  "version": "0.0.1",
+  "description": "Subscribe to messages from different iframes",
+  "types": "./dist/index.d.ts",
+  "main": "index.js",
+  "files": [
+    "dist",
+    "index.js"
+  ],
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "subscribe",
+    "iframes",
+    "message",
+    "postMessage",
+    "event"
+  ],
+  "author": "yanghi <yanghi-x@outlook.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yanghi/frame-subscriber"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "rollup": "^2.76.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.32.1",
+    "typescript": "^4.7.4"
+  }
+}
