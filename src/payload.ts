@@ -16,9 +16,9 @@ export interface Payload<T = any> {
     to?: Target
     data: T
     type: string
-    /**
-     * @internal
-     */
+}
+
+export interface InternalPayload<T = any> extends Payload<T> {
     __: true
 }
 

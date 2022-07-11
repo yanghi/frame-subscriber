@@ -1,6 +1,6 @@
 import EventEmitter from "./event";
 import { BaseOptions, expect, isSameSpecifiedBlockOptions, isSpecifiedBlockOptions, uniqueOption, UniqueOptions } from "./options";
-import { isPayload, Payload } from "./payload";
+import { InternalPayload, isPayload, Payload } from "./payload";
 import Subscriber, { SubscriberOptions } from "./subscriber";
 
 export interface ClientOptions extends BaseOptions {
@@ -164,7 +164,7 @@ class Client {
         this._win.postMessage(message, targetOrigin || '*')
     }
     emit(type: string, data: any, option?: BaseOptions): this {
-        const payload: Payload = {
+        const payload: InternalPayload = {
             data,
             type,
             __: true,
