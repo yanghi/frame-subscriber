@@ -38,7 +38,6 @@ class Client {
     }
     private _event = new EventEmitter()
     private _origin: string
-    private _child: Client[] = []
 
     get isRoot(): boolean {
         return this._isRoot
@@ -55,9 +54,6 @@ class Client {
         this._isRoot = this._root === window
 
         this._origin = window.origin || window.location.origin
-
-        window['__FS__'] = this
-        this._root['__FS__'] && this._root['__FS__']._child.push(this)
 
         this._resgiterEvent()
 
@@ -128,9 +124,6 @@ class Client {
         }
 
         return parent || win
-    }
-    getAllIns(): Client[] {
-        return this._root['__FS__'] && this._root['__FS__']._child
     }
     private _broadcast(payload: Payload) {
 
