@@ -259,6 +259,13 @@ class Client {
         return this
     }
     /**
+     * remove all event listeners out of client and all subscribers
+     */
+    offAll() {
+        this._event.offAll()
+        this._subscribers.forEach(sub => sub.offAll())
+    }
+    /**
      * @internal
      */
     _addSubscriber(sc: Subscriber) {
