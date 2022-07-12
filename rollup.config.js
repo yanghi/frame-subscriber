@@ -25,10 +25,6 @@ function makeConf(options, plugins = []) {
     return {
         input: './src/index.ts',
         ...options,
-        output: {
-            format: 'esm',
-            file: './dist/frame-subscriber.esm.bundle.js'
-        },
         plugins: [
             tsPlugin,
             nodeResolve(),
@@ -49,12 +45,13 @@ makeConf({
         file: './dist/frame-subscriber.esm.js',
         plugins: [getBabelOutputPlugin({ presets: ['@babel/preset-env'] })]
     }
-}, [terser({
-    module: false,
-    compress: {
-        ecma: 2015,
-        pure_getters: true
-    }
-}),
-babel({ babelHelpers: 'bundled' })])
+}, [
+    terser({
+        module: false,
+        compress: {
+            ecma: 2015,
+            pure_getters: true
+        }
+    }),
+    babel({ babelHelpers: 'bundled' })])
 ]
