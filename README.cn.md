@@ -126,7 +126,7 @@ let client = initializeClient({
 
 类似于`on`,但只监听一次
 
-**`off(type: string, listener: EventHandler, options?: BaseOptions): Client`**
+**`off(type: string, listener?: EventHandler, options?: BaseOptions): Client`**
 
 移除监听事件
 

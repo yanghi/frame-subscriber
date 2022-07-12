@@ -131,7 +131,7 @@ add event listenerTo monitor events, if valid `options` is provided, the corresp
 
 Similar to `on`, but only listens once
 
-**`off(type: string, listener: EventHandler, options?: BaseOptions): Client`**
+**`off(type: string, listener?: EventHandler, options?: BaseOptions): Client`**
 
 remove event listener
 

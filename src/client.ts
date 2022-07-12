@@ -196,7 +196,6 @@ class Client {
                 origin: this._origin,
                 uid: this._uid
             }
-
         }
 
         let _options = option || this.options.emit
@@ -245,7 +244,7 @@ class Client {
         return this._on(type, listener, options, true)
     }
     private _subscribers: Subscriber[] = []
-    off(type: string, listener: EventHandler, options?: BaseOptions) {
+    off(type: string, listener?: EventHandler, options?: BaseOptions) {
         let off = !!options
 
         if (options) {
