@@ -6,6 +6,10 @@ export interface Target {
 }
 
 export interface FromTarget {
+    /**
+     * Automatic generated
+     */
+    uid: string
     unique: string
     namespace?: string
     origin: string

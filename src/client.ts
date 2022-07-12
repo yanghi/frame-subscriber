@@ -2,6 +2,7 @@ import EventEmitter from "./event";
 import { BaseOptions, expect, isSameSpecifiedBlockOptions, isSpecifiedBlockOptions, uniqueOption, UniqueOptions } from "./options";
 import { InternalPayload, isPayload, Payload } from "./payload";
 import Subscriber, { SubscriberOptions } from "./subscriber";
+import { uid } from "./utils";
 
 export interface ClientOptions extends BaseOptions {
     emit?: BaseOptions
@@ -44,7 +45,9 @@ class Client {
     private _options: UniqueOptions<ClientOptions>
 
     private _loaded: Record<string, Payload> = {}
+    private _uid = uid()
 
+    get uid() { return this._uid }
     get options() {
         return this._options
     }
@@ -156,7 +159,7 @@ class Client {
         }
 
         // ignore emit if it's itself
-        if (payload.from.unique === this._unique) return
+        if (payload.from.uid === this._uid) return
 
         if (expect(payload.to || {}, this._options)) {
             this._event.emit(payload.type, payload)
@@ -190,7 +193,8 @@ class Client {
             from: {
                 unique: this._unique,
                 namespace: this._namespace,
-                origin: this._origin
+                origin: this._origin,
+                uid: this._uid
             }
 
         }
