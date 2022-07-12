@@ -71,7 +71,7 @@ sub.on("test", handler);
 client.on("test", handler, { namespace: "cool", unique: "very cool" });
 
 // in other frame
-// the sub will will receive message
+// the sub will receive message
 otherClient.emit("test", "realy cool", { namespace: "cool" });
 //the sub nothing will happen
 otherClient.emit("foo", "hello", { namespace: "awesome" });
@@ -108,6 +108,10 @@ ClientOptions {
      * The default option used by the emit method
      */
      emit?: BaseOptions
+    /**
+     * Controls whether the client triggers the event when messages received
+     */
+    shouldReceive?: (payload: Payload) => boolean
 }
 
 let client = initializeClient({
@@ -163,7 +167,7 @@ SubscriberOptions {
 import { subscriber } from 'frame-subscriber'
 
 let mySubscriber = subscriber({
-    origin: 'http://example.com
+    origin: 'http://example.com'
 })
 ```
 
@@ -176,3 +180,4 @@ These three parameters are consistent with the role of the client. It should be 
 **`remove`**
 
 Remove this subscriber from the client and remove all its event listeners
+

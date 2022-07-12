@@ -5,24 +5,36 @@ import Subscriber, { SubscriberOptions } from "./subscriber";
 
 export interface ClientOptions extends BaseOptions {
     emit?: BaseOptions
+    /**
+     * Controls whether the client triggers the event when messages received
+     */
+    shouldReceive?: (payload: Payload) => boolean
 }
 
 export const Events = {
     /**
      * message event, not include client emited
      */
-    MESSAGE: 'message',
+    MESSAGE: '@message',
     /**
      * original message event
      */
-    ORIGIN_MESSAGE: 'originmessage',
+    ORIGIN_MESSAGE: '@originmessage',
     /**
-     * when the client was created
+     * when the other client was created
      */
-    CREATED: 'created'
+    CREATED: '@created',
+    /**
+     * when the client's shouldReceive option return false
+     */
+    DECLINE: '@decline'
+} as const
+
+const InternalEvents = Object.keys(Events).map(key => Events[key])
+
+function isInternalEvent(type: string) {
+    return InternalEvents.includes(type)
 }
-
-
 class Client {
     private _win = window;
     private _root: Window
@@ -135,6 +147,13 @@ class Client {
         this._emit(payload)
     }
     private _emit(payload: Payload) {
+        const type = payload.type
+
+        if (!isInternalEvent(type) && this._options.shouldReceive) {
+            const shouldReceive = this._options.shouldReceive(payload)
+
+            if (!shouldReceive) return this._event.emit(Events.DECLINE, payload)
+        }
 
         // ignore emit if it's itself
         if (payload.from.unique === this._unique) return

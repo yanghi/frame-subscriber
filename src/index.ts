@@ -23,4 +23,5 @@ export function subscriber(options: SubscriberOptions) {
     return subscriber
 }
 
+export { Events }
 

@@ -105,6 +105,10 @@ client.emit('foo', 'hello', { namespace: 'love'})
      * emit方法使用的默认option
      */
      emit?: BaseOptions
+     /**
+     * 控制是否接收消息,返回false则不接收
+     */
+    shouldReceive?: (payload: Payload) => boolean
 }
 
 let client = initializeClient({
