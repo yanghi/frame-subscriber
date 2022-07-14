@@ -125,7 +125,11 @@ class Client {
             if (this._loaded[clientUID]) {
                 callback(this._loaded[clientUID])
             } else {
-                this._event.on(Events.CREATED, callback)
+                this._event.on(Events.CREATED, (payload: Payload) => {
+                    if (payload.from.unique === clientUID) {
+                        callback!(payload)
+                    }
+                })
             }
         }
 
