@@ -167,19 +167,15 @@ class Client {
 
         if (expect(payload.to || {}, this._options)) {
             this._event.emit(payload.type, payload)
-        }
 
-        if (isSpecifiedBlockOptions(payload.to)) {
-
-
-            this._event.emit(payload.type, payload)
-
-
-            for (let i = 0; i < this._subscribers.length; i++) {
-                let subscriber = this._subscribers[i]
-
-                if (subscriber.expect(payload.to)) {
-                    subscriber.emit(payload.type, payload)
+            if (isSpecifiedBlockOptions(payload.to)) {
+    
+                for (let i = 0; i < this._subscribers.length; i++) {
+                    let subscriber = this._subscribers[i]
+    
+                    if (subscriber.expect(payload.to)) {
+                        subscriber.emit(payload.type, payload)
+                    }
                 }
             }
         }
