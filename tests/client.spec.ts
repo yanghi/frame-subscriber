@@ -46,7 +46,7 @@ describe('Client', () => {
         client.on('foo', expectEventDone)
 
         expectEventDone.willCall('foo', 'bar')
-        expectEventDone.willCall('foo', 'zoo', (payload)=>{
+        expectEventDone.willCall('foo', 'zoo', (payload) => {
             expect(payload.to?.unique).toBe('foo')
         })
 
@@ -58,7 +58,7 @@ describe('Client', () => {
 
 
         client.on('event-1', expectEventDone)
-        expectEventDone.willCall('event-1', 'foo', (payload)=>{
+        expectEventDone.willCall('event-1', 'foo', (payload) => {
             expect(payload.to?.namespace).toBe('foo-ns')
         })
         client.on('event-2', expectEventDone)
@@ -69,34 +69,34 @@ describe('Client', () => {
 
 
     })
-    it('on with options', (done)=>{
+    it('on with options', (done) => {
         const expectEventDone = eventExpecter(done)
 
         const client = new Client()
         const mp = mockPost()
 
 
-        client.on('foo', expectEventDone, {namespace: 'foo'})
+        client.on('foo', expectEventDone, { namespace: 'foo' })
         expectEventDone.willCall('foo', 'data-1')
 
-        client.on('foo', expectEventDone, {namespace: 'bar'})
+        client.on('foo', expectEventDone, { namespace: 'bar' })
         expectEventDone.willCall('foo', 'data-3')
 
 
-        mp.post({ type: 'foo', data: 'data-1', to: { namespace: 'foo'}})
+        mp.post({ type: 'foo', data: 'data-1', to: { namespace: 'foo' } })
         // not emited
         mp.post({ type: 'foo', data: 'data-2', to: { namespace: 'not-exsit' } })
-        mp.post({ type: 'foo', data: 'data-3', to: { namespace: 'bar'}})
+        mp.post({ type: 'foo', data: 'data-3', to: { namespace: 'bar' } })
 
-        client.on('bar', expectEventDone, {namespace: 'bar', unique: 'bar'})
+        client.on('bar', expectEventDone, { namespace: 'bar', unique: 'bar' })
         expectEventDone.willCall('bar', 'data-4')
 
         // not emited
-        mp.post({ type: 'bar', data: 'data-3', to: { namespace: 'bar'}})
-        mp.post({ type: 'bar', data: 'data-4', to: { namespace: 'bar',unique: 'bar'}})
+        mp.post({ type: 'bar', data: 'data-3', to: { namespace: 'bar' } })
+        mp.post({ type: 'bar', data: 'data-4', to: { namespace: 'bar', unique: 'bar' } })
 
     })
-    it('whenReady', (done)=>{
+    it('whenReady', (done) => {
         const expectEventDone = eventExpecter(done)
 
         const client = new Client({
@@ -107,20 +107,20 @@ describe('Client', () => {
 
         client.whenReady(expectEventDone)
 
-        expectEventDone.willCall(Events.CREATED, undefined, (payload)=>{
+        expectEventDone.willCall(Events.CREATED, undefined, (payload) => {
             expect(payload.from.unique).toBe('itsme')
         })
 
-        mp.post({ type: Events.CREATED, from: {unique: 'itsme'}})
+        mp.post({ type: Events.CREATED, from: { unique: 'itsme' } })
 
 
-        client.whenReady(['any','foo', 'bar'], expectEventDone)
+        client.whenReady(['any', 'foo', 'bar'], expectEventDone)
 
-        expectEventDone.willCall(Events.CREATED, undefined, (payload)=>{
+        expectEventDone.willCall(Events.CREATED, undefined, (payload) => {
             expect(payload.from.unique).toBe('foo')
         })
 
-        mp.post({ type: Events.CREATED, from: {unique: 'foo'}})
-        
+        mp.post({ type: Events.CREATED, from: { unique: 'foo' } })
+
     })
 })

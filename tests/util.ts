@@ -53,9 +53,7 @@ export function mockPost() {
     const iframe = document.createElement("iframe");
     document.body.appendChild(iframe);
 
-    // const top = window.top || window.parent
     const top = window
-    // const top = iframe.contentWindow!
 
     return {
         post(payload: {
