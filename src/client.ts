@@ -1,5 +1,5 @@
 import EventEmitter from "./event";
-import { BaseOptions, expect, isSameSpecifiedBlockOptions, isSpecifiedBlockOptions, uniqueOption, UniqueOptions } from "./options";
+import { BaseOptions, isSameSpecifiedBlockOptions, isSpecifiedBlockOptions, looseExpect, uniqueOption, UniqueOptions } from "./options";
 import { InternalPayload, isPayload, Payload } from "./payload";
 import Subscriber, { SubscriberOptions } from "./subscriber";
 import { uid } from "./utils";
@@ -28,7 +28,15 @@ export const Events = {
     /**
      * when the client's shouldReceive option return false
      */
-    DECLINE: '@decline'
+    DECLINE: '@decline',
+    /**
+     * Receive messages from other iframes, includle all messages, not filtered
+     */
+    ORIGIN_RECEIVE: '@originreceive',
+    /**
+     * Expected messages from other iframes
+     */
+    EXPECT_RECEIVE: '@expectreceive'
 } as const
 
 const InternalEvents = Object.keys(Events).map(key => Events[key])
@@ -40,9 +48,9 @@ class Client {
     private _win = window;
     private _root: Window
     private _isRoot: boolean
-    private _unique: string
+    private _unique?: string
     private _namespace: string | undefined
-    private _options: UniqueOptions<ClientOptions>
+    private _options: ClientOptions
 
     private _loaded: Record<string, Payload> = {}
     private _uid = uid()
@@ -61,7 +69,7 @@ class Client {
     constructor(options: ClientOptions = {}) {
         this._root = this.getRoot(window)
 
-        this._options = uniqueOption(options)
+        this._options = options
 
         this._unique = this._options.unique
         this._namespace = options.namespace
@@ -77,14 +85,14 @@ class Client {
     }
     private _resgiterEvent() {
         this.on(Events.CREATED, (payload) => {
-            this._loaded[payload.from.unique] = payload
+            if (payload.from.unique) {
+                this._loaded[payload.from.unique] = payload
+            }
         })
 
         this._win.addEventListener('message', (e) => {
             const raw = e.data
-
             if (isPayload(raw)) {
-
                 this._broadcast(raw)
             } else {
                 this._event.emit(Events.MESSAGE, e)
@@ -154,27 +162,39 @@ class Client {
         this._emit(payload)
     }
     private _emit(payload: Payload) {
-        const type = payload.type
-
-        if (!isInternalEvent(type) && this._options.shouldReceive) {
-            const shouldReceive = this._options.shouldReceive(payload)
-
-            if (!shouldReceive) return this._event.emit(Events.DECLINE, payload)
-        }
-
         // ignore emit if it's itself
         if (payload.from.uid === this._uid) return
 
-        if (expect(payload.to || {}, this._options)) {
-            this._event.emit(payload.type, payload)
+        this._event.emit(Events.ORIGIN_RECEIVE, payload)
+
+        const type = payload.type
+        let internalEmited = false, _isInternalEvent = isInternalEvent(type)
+
+        if (isInternalEvent(type)) {
+            internalEmited = true
+            this._event.emit(type, payload)
+        } else {
+            if (this._options.shouldReceive) {
+                const shouldReceive = this._options.shouldReceive(payload)
+
+                if (!shouldReceive) return this._event.emit(Events.DECLINE, payload)
+            }
+        }
+
+        if (looseExpect(this._options, payload.to || {})) {
+
+            !internalEmited && this._event.emit(payload.type, payload)
+
+            this._event.emit(Events.EXPECT_RECEIVE, payload)
 
             if (isSpecifiedBlockOptions(payload.to)) {
-    
+
                 for (let i = 0; i < this._subscribers.length; i++) {
                     let subscriber = this._subscribers[i]
-    
+
                     if (subscriber.expect(payload.to)) {
                         subscriber.emit(payload.type, payload)
+                    } else {
                     }
                 }
             }

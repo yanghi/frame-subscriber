@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mp-blog</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    
+  </body>
+  <div>
+    <button id="send"">send</button>
+    <iframe  src="http://127.0.0.1:5500/demo/child.html"></iframe>
+  </div>
+
+  <script type="module">
+
+    import Client from '../dist/frame-subscriber.esm.bundle.js'
+    
+    var c =  Client({
+      // namespace: 'b'
+    }
+    )
+    c.whenReady(['childd', 'child'],(e)=>{
+          console.log('ready', e)
+        })
+    c
+    // .on('message', function(e){
+    //         console.log('parent got message: ' ,e)
+    //     })
+        .on('test', function(e){
+            console.log('parent got test: ' ,e)
+        }).on('test', function(e){
+          console.log('parent subscrit got test: ' ,e)
+
+        }, {
+          namespace: 'b'
+        })
+
+      
+    function send(){
+      // c.send('haha')
+      c.emit('test', {a: 'gs'})
+      // c.send('gggss')
+      // window.postMessage('----', '*')
+    }
+    document.querySelector('#send').onclick = send
+        </script>
+</html>

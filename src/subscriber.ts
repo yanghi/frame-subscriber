@@ -2,7 +2,7 @@
 import Client from "./client";
 import EventEmitter from "./event";
 
-import { BaseOptions, expect } from "./options";
+import { BaseOptions, strictExpect } from "./options";
 
 
 export interface SubscriberOptions extends BaseOptions {
@@ -20,8 +20,8 @@ class Subscriber extends EventEmitter {
     get options() {
         return this._options
     }
-    expect(optioins: BaseOptions) {
-        return expect(optioins, this._options)
+    expect(options: BaseOptions) {
+        return strictExpect(this._options, options)
     }
     private _client: Client | undefined
 

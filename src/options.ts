@@ -1,4 +1,4 @@
-import { isObject, uid } from "./utils"
+import { isEmptyObj, isObject, uid } from "./utils"
 
 export interface BaseOptions {
     unique?: string
@@ -41,4 +41,16 @@ export function isSameSpecifiedBlockOptions(a?: BaseOptions, b?: BaseOptions): b
     }
 
     return result
+}
+
+export function looseExpect(base: BaseOptions, match: BaseOptions | undefined): boolean {
+    if (!match || isEmptyObj(base) || isEmptyObj(match)) return true
+
+    return expect(match, base)
+}
+
+export function strictExpect(base: BaseOptions, match: BaseOptions | undefined): boolean {
+    if (!match || isEmptyObj(base) || isEmptyObj(match)) return true
+
+    return expect(base, match)
 }

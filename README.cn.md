@@ -80,6 +80,22 @@ client.emit('foo', 'hello', { namespace: 'love'})
 
 
 ```
+### 高级用法
+自定义处理client的事件
+
+``` ts
+import {Events} from 'frame-subscriber'
+
+client.on(Events.ORIGIN_RECEIVE, function customHandlerEvent(payload){
+    if(['foo','bar'].include(payload.from.namespace)){
+        console.log(payload.data)
+    }
+})
+// Events事件常量还有其他内部事件,
+client.on(Events.CREATED, handler)
+.on(Events.EXPECT_RECEIVE,handler)
+.on(Events.DECLINE.handler)
+```
 
 ### Client
 `initializeClient(options?: ClientOptions): Client`
