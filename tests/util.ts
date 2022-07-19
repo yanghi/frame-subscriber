@@ -82,8 +82,6 @@ export function eventExpecter(endCb: () => void) {
 
 
 export function mockPost() {
-    const iframe = document.createElement("iframe");
-    document.body.appendChild(iframe);
 
     const top = window
 
