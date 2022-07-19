@@ -123,4 +123,126 @@ describe('Client', () => {
         mp.post({ type: Events.CREATED, from: { unique: 'foo' } })
 
     })
+    it('off', (done) => {
+        const expectEventDone = eventExpecter(done)
+
+        const client = new Client()
+
+        const mp = mockPost()
+
+        const spy = expectEventDone.spyDone(), spy_1 = expectEventDone.spyDone()
+
+        client.on('foo', spy).on('foo', spy_1)
+
+        client.off('foo', spy)
+
+        expectEventDone.willCall('foo', undefined, () => {
+            expect(spy_1).toHaveBeenCalled()
+            expect(spy).not.toHaveBeenCalled()
+        })
+
+        mp.post({ type: 'foo' })
+
+
+    })
+    it('off with options', (done) => {
+        const expectEventDone = eventExpecter(done)
+
+        const client = new Client()
+
+        const mp = mockPost()
+
+        const spy = expectEventDone.spyDone(), spy_1 = expectEventDone.spyDone()
+
+        const options = {
+            namespace: 'foo'
+        }
+
+        client.on('foo', spy, options).on('foo', spy_1, options)
+
+        expect(client.getSubscriber(options).length).toBe(2)
+        client.off('foo', spy, { ...options })
+
+
+        expectEventDone.willCall('foo', undefined, () => {
+            expect(spy_1).toHaveBeenCalled()
+            expect(spy).not.toHaveBeenCalled()
+        })
+
+        mp.post({ type: 'foo', to: options })
+
+        const options_1 = {
+            unique: 'zero',
+            namespace: 'bar'
+        }
+
+        const spy_2 = expectEventDone.spyDone(), spy_3 = expectEventDone.spyDone()
+
+        client.on('bar', spy_2, options_1).on('bar', spy_2, options_1)
+        client.on('bar', spy_3, options_1)
+
+        client.off('bar', spy_2, options_1)
+
+        expectEventDone.willCall('bar', undefined, () => {
+            expect(spy_3).toHaveBeenCalled()
+            expect(spy_2).not.toHaveBeenCalled()
+        })
+
+        mp.post({ type: 'bar', to: options_1 })
+
+        const spy_4 = expectEventDone.spyDone(), spy_5 = expectEventDone.spyDone()
+
+        client.on('zero', spy_4, options_1)
+            .on('zero', spy_5, options_1)
+
+        // should'nt remove event listener
+        client.off('zero', spy_4)
+        client.off('zero', spy_5, { namespace: 'notTarget' })
+
+        // expectEventDone.willCall('zero')
+        expectEventDone.willCallTimes(2, () => {
+            expect(spy_4).toBeCalledTimes(1)
+            expect(spy_5).toBeCalledTimes(1)
+        })
+
+        mp.post({ type: 'zero', to: options_1 })
+
+
+    })
+    it('offAll', (done) => {
+        const expectEventDone = eventExpecter(done)
+
+        const client = new Client()
+
+        const mp = mockPost()
+
+        const spy = expectEventDone.spyDone(), spy_1 = expectEventDone.spyDone(), spy_2 = expectEventDone.spyDone(), spy_3 = expectEventDone.spyDone()
+
+        const opt = { namespace: 'foo' }
+
+        client.on('foo', spy, opt)
+            .on('bar', spy_1)
+
+
+        client.offAll()
+
+
+        client.on('foo', spy_2, opt)
+            .on('bar', spy_3)
+
+        expectEventDone.whenAllCalled(() => {
+            expect(spy).not.toHaveBeenCalled()
+            expect(spy_1).not.toHaveBeenCalled()
+
+            expect(spy_2).toHaveBeenCalledTimes(1)
+            expect(spy_3).toHaveBeenCalledTimes(1)
+        })
+
+        expectEventDone.willCallTimes(2)
+
+
+        mp.post({ type: 'foo', to: opt })
+        mp.post({ type: 'bar' })
+
+    })
 })

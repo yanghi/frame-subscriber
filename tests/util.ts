@@ -2,7 +2,7 @@ import { Payload, Target } from '../src/payload';
 
 export function eventExpecter(endCb: () => void) {
 
-    let called: Payload[] = [], expected: Array<((p: Payload) => void)> = [];
+    let called: Payload[] = [], expected: Array<((p: Payload) => void)> = [], endCbs: Array<((p: Payload[]) => void)> = [];
     let flag = 0
 
     let spy = jest.fn()
@@ -20,6 +20,9 @@ export function eventExpecter(endCb: () => void) {
         }
         if (flag === expected.length - 1) {
             endCb()
+            endCbs.forEach(fn => {
+                fn(called)
+            })
         }
         flag++
 
@@ -43,6 +46,35 @@ export function eventExpecter(endCb: () => void) {
     done.willCallAny = () => {
         expected.push(() => { })
     }
+    done.spyDone = (fn?: ((...args: any[]) => any)) => {
+        let mock = jest.fn()
+
+        let run = (p) => {
+            done(p)
+            fn && fn(p)
+        }
+        mock.mockImplementation(run)
+
+        return mock
+    }
+
+    done.willCallTimes = (time: number, cb?: (called: Payload[]) => void) => {
+
+        let start = expected.length, end = start + time
+
+        for (let i = 0; i < time - 1; i++) {
+            done.willCallAny()
+        }
+        expected.push(() => {
+            cb && cb(called.slice(start, end))
+        })
+
+    }
+
+    done.whenAllCalled = (cb: (called: Payload[]) => void) => {
+        endCbs.push(cb)
+    }
+
     Object.assign(spy, done)
 
     return spy as typeof spy & typeof done

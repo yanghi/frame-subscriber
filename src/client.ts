@@ -265,17 +265,13 @@ class Client {
     }
     private _subscribers: Subscriber[] = []
     off(type: string, listener?: EventHandler, options?: BaseOptions) {
-        let off = !!options
-
         if (options) {
             let sbs = this.getSubscriber(options)
             sbs.forEach(sub => sub.off(type, listener))
-            off = !sbs.length
-        }
-
-        if (!off) {
+        } else {
             this._event.off(type, listener)
         }
+
         return this
     }
     /**
