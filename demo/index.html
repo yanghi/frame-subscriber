@@ -19,33 +19,23 @@
 
     import Client from '../dist/frame-subscriber.esm.bundle.js'
     
-    var c =  Client({
-      // namespace: 'b'
-    }
-    )
+    var c =  Client()
     c.whenReady(['childd', 'child'],(e)=>{
           console.log('ready', e)
         })
     c
-    // .on('message', function(e){
-    //         console.log('parent got message: ' ,e)
-    //     })
-        .on('test', function(e){
-            console.log('parent got test: ' ,e)
-        }).on('test', function(e){
-          console.log('parent subscrit got test: ' ,e)
+      .on('test', function(e){
+          console.log('parent got test: ' ,e)
+      }).on('test', function(e){
+        console.log('parent subscrit got test: ' ,e)
 
-        }, {
-          namespace: 'b'
-        })
-
+      }, {
+        namespace: 'b'
+      })
       
     function send(){
-      // c.send('haha')
       c.emit('test', {a: 'gs'})
-      // c.send('gggss')
-      // window.postMessage('----', '*')
     }
     document.querySelector('#send').onclick = send
-        </script>
+  </script>
 </html>
