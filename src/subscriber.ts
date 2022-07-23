@@ -23,8 +23,27 @@ class Subscriber extends EventEmitter {
     expect(options: BaseOptions) {
         return strictExpect(this._options, options)
     }
+    /**
+    * @internal
+    */
+    _emit(type: string, ...args: any[]) {
+        return super.emit(type, ...args)
+    }
+    /**
+     * its same as client's emit totally
+     */
+    emit(type: string, data: any, options?: BaseOptions) {
+        if (this._client) {
+            this._client.emit(type, data, options)
+        }
+
+        return this
+    }
     private _client: Client | undefined
 
+    get client() {
+        return this._client
+    }
     addTo(client: Client) {
         this._client = client
         client._addSubscriber(this)
@@ -39,11 +58,6 @@ class Subscriber extends EventEmitter {
 
 }
 
-interface Subscriber extends EventEmitter {
-    /**
-     * @internal
-     */
-    emit: (type: string, ...args: any[]) => this
-}
+
 
 export default Subscriber
