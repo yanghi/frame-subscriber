@@ -6,9 +6,28 @@ export function eventExpecter(endCb: () => void) {
     let flag = 0
 
     let spy = jest.fn()
+    function endHook() {
+        setTimeout(() => {
 
+            endCb()
+            endCbs.forEach(fn => {
+                fn(called)
+            })
+        }, 0);
+    }
+
+    let _t
+    function checkTimeout() {
+        clearTimeout(_t)
+
+        _t = setTimeout(() => {
+            endHook()
+        }, 100)
+    }
+    checkTimeout()
     function done(payload: Payload) {
 
+        checkTimeout()
         let cb = expected[flag]
 
         called.push(payload)
@@ -19,10 +38,7 @@ export function eventExpecter(endCb: () => void) {
 
         }
         if (flag === expected.length - 1) {
-            endCb()
-            endCbs.forEach(fn => {
-                fn(called)
-            })
+            endHook()
         }
         flag++
 
