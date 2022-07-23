@@ -52,25 +52,6 @@ client
   .emit("my-emit", "hello");
 ```
 
-### Advanced usage
-
-Custom handling of client events
-
-```ts
-import { Events } from "frame-subscriber";
-
-client.on(Events.ORIGIN_RECEIVE, function customHandlerEvent(payload) {
-  if (["foo", "bar"].include(payload.from.namespace)) {
-    console.log(payload.data);
-  }
-});
-// Events constants and other internal events properties
-client
-  .on(Events.CREATED, handler)
-  .on(Events.EXPECT_RECEIVE, handler)
-  .on(Events.DECLINE, handler);
-```
-
 ### Specify subscribe
 
 ```js
@@ -99,6 +80,25 @@ otherClient.emit("test", "realy cool", {
 otherClient.emit("foo", "hello", { namespace: "awesome" });
 //the sub nothing will happen too
 otherClient.emit("test", "realy cool", { namespace: "cool", unique: "cool" });
+```
+
+### Advanced usage
+
+Custom handling of client events
+
+```ts
+import { Events } from "frame-subscriber";
+
+client.on(Events.ORIGIN_RECEIVE, function customHandlerEvent(payload) {
+  if (["foo", "bar"].include(payload.from.namespace)) {
+    console.log(payload.data);
+  }
+});
+// Events constants and other internal events properties
+client
+  .on(Events.CREATED, handler)
+  .on(Events.EXPECT_RECEIVE, handler)
+  .on(Events.DECLINE, handler);
 ```
 
 ## API
