@@ -144,6 +144,7 @@ class Client {
         return this
     }
     getRoot(win: Window): Window {
+        if (this._root) return this._root
         const parent = win.parent
 
         if (parent && parent !== win) {
@@ -187,15 +188,14 @@ class Client {
 
             this._event.emit(Events.EXPECT_RECEIVE, payload)
 
-            if (isSpecifiedBlockOptions(payload.to)) {
+        }
+        if (isSpecifiedBlockOptions(payload.to)) {
 
-                for (let i = 0; i < this._subscribers.length; i++) {
-                    let subscriber = this._subscribers[i]
+            for (let i = 0; i < this._subscribers.length; i++) {
+                let subscriber = this._subscribers[i]
 
-                    if (subscriber.expect(payload.to)) {
-                        subscriber.emit(payload.type, payload)
-                    } else {
-                    }
+                if (subscriber.expect(payload.to)) {
+                    subscriber._emit(payload.type, payload)
                 }
             }
         }
