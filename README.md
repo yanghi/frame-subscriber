@@ -91,7 +91,10 @@ client.on("test", handler, { namespace: "cool", unique: "very cool" });
 
 // in other frame
 // the sub will receive message
-otherClient.emit("test", "realy cool", { namespace: "cool" });
+otherClient.emit("test", "realy cool", {
+  namespace: "cool",
+  unique: "very cool",
+});
 //the sub nothing will happen
 otherClient.emit("foo", "hello", { namespace: "awesome" });
 //the sub nothing will happen too
