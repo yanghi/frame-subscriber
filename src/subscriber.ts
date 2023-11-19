@@ -35,7 +35,7 @@ class Subscriber extends EventEmitter {
     /**
      * its same as client's emit totally
      */
-    emit(type: string, data: any, options?: BaseOptions) {
+    emit(type: string, data?: any, options?: BaseOptions) {
         const payload: InternalPayload = {
             data,
             type,
@@ -69,6 +69,8 @@ class Subscriber extends EventEmitter {
         return this._client
     }
     addTo(client: Client) {
+        if(this._client) return
+
         this._client = client
         client._addSubscriber(this)
     }

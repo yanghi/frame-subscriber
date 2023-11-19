@@ -24,4 +24,5 @@ export function subscriber(options: SubscriberOptions) {
 }
 
 export { Events }
+export { EventHandler } from './client'
 
